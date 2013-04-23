@@ -1,0 +1,17 @@
+body
+{
+background-image:url('images/background.jpg');
+}
+
+h1, h2
+{
+font-family:Tahoma;
+color:Orange;
+text-shadow: 2px 2px #ff0000;
+}
+
+p
+{
+font-family:Tahoma;
+color:Orange;
+}

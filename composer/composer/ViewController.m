@@ -110,6 +110,12 @@
             [self drawQuarterNote];
             NSLog(@"locX: %f , %f", locX, locY);
         }
+     else
+        {
+            ///MAKE THE BAR OR SPACE HOVERED OVER LIGHT UP
+            ///MAKE THE BAR OR SPACE PLAY THE CORRESPONDING SOUND
+        }
+    
     }
 }
 

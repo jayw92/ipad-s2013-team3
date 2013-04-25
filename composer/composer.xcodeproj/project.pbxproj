@@ -7,6 +7,7 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61987B4D1728FFA70034455B /* scrollViewPseudoCode.m in Sources */ = {isa = PBXBuildFile; fileRef = 61987B4C1728FFA70034455B /* scrollViewPseudoCode.m */; };
 		F910BDEE172750510032AA34 /* View.xib in Resources */ = {isa = PBXBuildFile; fileRef = F910BDED172750500032AA34 /* View.xib */; };
 		F910BDF4172769440032AA34 /* scrollViewMain.m in Sources */ = {isa = PBXBuildFile; fileRef = F910BDF3172769440032AA34 /* scrollViewMain.m */; };
 		F93DB0BB17278DCC004CA329 /* PIANO_49.wav in Resources */ = {isa = PBXBuildFile; fileRef = F93DB08917278DCC004CA329 /* PIANO_49.wav */; };
@@ -76,6 +77,8 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		61987B4B1728FFA70034455B /* scrollViewPseudoCode.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrollViewPseudoCode.h; sourceTree = "<group>"; };
+		61987B4C1728FFA70034455B /* scrollViewPseudoCode.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = scrollViewPseudoCode.m; sourceTree = "<group>"; };
 		F910BDED172750500032AA34 /* View.xib */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = file.xib; path = View.xib; sourceTree = "<group>"; };
 		F910BDF2172769440032AA34 /* scrollViewMain.h */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.h; path = scrollViewMain.h; sourceTree = "<group>"; };
 		F910BDF3172769440032AA34 /* scrollViewMain.m */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.c.objc; path = scrollViewMain.m; sourceTree = "<group>"; };
@@ -265,6 +268,8 @@
 				F910BDED172750500032AA34 /* View.xib */,
 				F99A7E4B16ED2FBA005F5A1B /* ViewController.h */,
 				F99A7E4C16ED2FBA005F5A1B /* ViewController.m */,
+				61987B4B1728FFA70034455B /* scrollViewPseudoCode.h */,
+				61987B4C1728FFA70034455B /* scrollViewPseudoCode.m */,
 				F99A7E5C16ED33F6005F5A1B /* PDFViewController.h */,
 				F99A7E5D16ED33F6005F5A1B /* PDFViewController.m */,
 				F910BDF2172769440032AA34 /* scrollViewMain.h */,
@@ -409,6 +414,7 @@
 				F99A7E4D16ED2FBA005F5A1B /* ViewController.m in Sources */,
 				F99A7E5E16ED33F6005F5A1B /* PDFViewController.m in Sources */,
 				F910BDF4172769440032AA34 /* scrollViewMain.m in Sources */,
+				61987B4D1728FFA70034455B /* scrollViewPseudoCode.m in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

@@ -33,7 +33,7 @@ struct noteOnStaffStruct
  /// live updating, to keep track of where the next note goes
  
  int currentMeasure = 0; (this gets iterated as notes are added)
- int current 32_beat = 0; (this gets iterated measure by measure)
+ int current32_beat = 0; (this gets iterated measure by measure)
  
  typedef int MIDINoteNumber
  typedef int barOrSpaceNumber

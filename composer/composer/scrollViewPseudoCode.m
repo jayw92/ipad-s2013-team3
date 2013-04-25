@@ -93,13 +93,27 @@
     //     barOrSpaceNumber getVerticalDropzoneOnStaff (CGPoint pos)
     //          {
     //             int distanceFromBottom =  pos.y - (startingStaffY - allowError);
-    //             int barOrSpaceNumber =      distanceFromBottom/spaceBetweenY);
+    //             int barOrSpaceNumber =      distanceFromBottom/spaceBetweenY;
     //
     
     
     
     if (sender.state == UIGestureRecognizerStateEnded)   // AFTER THE FINGER iS LIFTED UP, THE NOTE IS ADDED
         {
+            
+            // THE STUFF UNDERNEATH HERE BECOMES IRRELEVANT ONCE WE HAVE THE tempVerticalDropzoneOnStaff correct
+            // SO THEN CALL A drawNote (currentMeasure, currentBeat, length, MIDINoteNumber),
+                                        //  that adds the note to the array and the screen
+            // The location in pixels of each image in musical time is:
+            // x = (measure * measureWidthInPixels) + (32_beat * 32_widthInPixels)
+            //
+            //
+            // then iterate current measure and current32_Beat:
+            // current32_Beat += length
+            // currentMeasure += current32_Beat/32
+            // current32_Beat %= 32
+            //
+            
             if ([self isOnStaff:position]==true){
                 NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
                 [self drawQuarterNote];
@@ -124,6 +138,7 @@
             
             //2
             // USE THAT ABOVE INFORMATION TO LIGHT UP THAT BAR OR SPACE (tempVerticalDropzoneOnStaff)
+            // BUT MORE IMPORTANTLY TO <PLAY THAT NOTE>
             
             //3
             // HAVING THE NOTE POP UP AND TRACK THE FINGER

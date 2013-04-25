@@ -25,7 +25,7 @@
     
     self = [super initWithCoder:aDecoder];
     if (self) {
-        tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTaps:)];
+        tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(singleFingerNoteAdd::)];
         tapGestureRecognizer.numberOfTapsRequired = 1;
         tapGestureRecognizer.numberOfTouchesRequired = 1;
         [self addGestureRecognizer:tapGestureRecognizer];
@@ -82,24 +82,90 @@
 }
 
 //Add to staff
--(void) handleTaps:(UITapGestureRecognizer *)sender
+-(void) singleFingerNoteAdd:(UITapGestureRecognizer *)sender
 {
     CGPoint position = [sender locationInView:sender.view];
-    if (sender.state == UIGestureRecognizerStateEnded){
-        if ([self isOnStaff:position]==true){
-            NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
-            [self drawQuarterNote];
-            NSLog(@"locX: %f , %f", locX, locY);
-            [self setNeedsDisplay];
+    
+    // barOrSpaceNumber tempVerticalDropzoneOnStaff = getVerticalDropzoneOnStaff (position)
+   
+    
+    //  SIMPLER VERTICAL ALGORITHM FOR DETERMINING POSITION:
+    //     barOrSpaceNumber getVerticalDropzoneOnStaff (CGPoint pos)
+    //          {
+    //             int distanceFromBottom =  pos.y - (startingStaffY - allowError);
+    //             int barOrSpaceNumber =      distanceFromBottom/spaceBetweenY);
+    //
+    
+    
+    
+    if (sender.state == UIGestureRecognizerStateEnded)   // AFTER THE FINGER iS LIFTED UP, THE NOTE IS ADDED
+        {
+            if ([self isOnStaff:position]==true){
+                NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
+                [self drawQuarterNote];
+                NSLog(@"locX: %f , %f", locX, locY);
+                [self setNeedsDisplay];
+            }
+            if ([self isBetweenStaff:position]==true){
+                NSLog(@"Between staff - 1: %@", NSStringFromCGPoint(position));
+                [self drawQuarterNote];
+                NSLog(@"locX: %f , %f", locX, locY);
+                [self setNeedsDisplay];
+            }
         }
-        if ([self isBetweenStaff:position]==true){
-            NSLog(@"Between staff - 1: %@", NSStringFromCGPoint(position));
-            [self drawQuarterNote];
-            NSLog(@"locX: %f , %f", locX, locY);
+    
+    else
+        {
+            //SO WHILE THE FINGER IS STILL HELD DOWN, AND THE NOTE IS GONNA BE ADDED, DO THREE THINGS:
+            
+            //1
+            // STAY TRACKING THE FINGER, KEEPING TRACK OF WHICH BAR OR SPACE IT IS IN THE DOMAIN OF
+            //  (tempVerticalDropzoneOnStaff)
+            
+            //2
+            // USE THAT ABOVE INFORMATION TO LIGHT UP THAT BAR OR SPACE (tempVerticalDropzoneOnStaff)
+            
+            //3
+            // HAVING THE NOTE POP UP AND TRACK THE FINGER
+            
             [self setNeedsDisplay];
+    
         }
-    }
+    
 }
+
+
+/******************************************************************************************
+ FUNCTIONS FOR MIDI / BAR LINE / NOTE NUMBER / FUCKALL CONVERSIONS
+ 
+ 
+ // a staff starts
+ with the bottom of a treble cleff staff "E" being E4, 52.
+ peep the functions below for the conversions
+ 
+MIDINoteNumber verticalDropzoneToMIDINumber (barOrSpaceNumber tempVerticalDropzoneOnStaff)
+ {
+    //so, if the bottom bar of the staff is 0, that makes E 0, so
+ 
+    return (tempVerticalDropzoneOnStaff + 52);
+ }
+  
+ 
+ //these MIDI note numbers correspond with the number of the audio file that needs to be cued
+ 
+ 
+
+ 
+ 
+ 
+ 
+ 
+******************************************************************************************/
+
+
+
+
+
 
 - (void)drawRect:(CGRect)rect
 {

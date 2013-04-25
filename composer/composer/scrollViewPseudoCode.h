@@ -18,7 +18,7 @@ struct noteOnStaffStruct
                             with the bottom of a treble cleff staff "E" being E4, 52.
                             peep the functions below for the conversions
     int measure;
-    int beat_32;         // in 32nd notes, where 0 is 1, 8 is 2, 16 is 3, 24 is 4
+    int 32_beat;         // in 32nd notes, where 0 is 1, 8 is 2, 16 is 3, 24 is 4
     int length;           // the length of the note, in 32nd notes
  };
  //***************************************************************************
@@ -27,12 +27,16 @@ struct noteOnStaffStruct
 /*
  GLOBAL Constants for drawing the measures (eventually this might be editable by zoom):
  
- int measureWidth = (  ?????? however wide you think they should be  );
- int 32_width = measureWidth / 32;
+ int measureWidthInPixels = (  ?????? however wide you think they should be  );
+ int 32_widthInPixels = measureWidthInPixels / 32;
  
- live updating, to keep track of where the next note goes
+ /// live updating, to keep track of where the next note goes
  
- int currentMeasure = 
+ int currentMeasure = 0; (this gets iterated as notes are added)
+ int current 32_beat = 0; (this gets iterated measure by measure)
+ 
+ typedef int MIDINoteNumber
+ typedef int barOrSpaceNumber
  
  
 */
@@ -61,7 +65,7 @@ struct noteOnStaffStruct
 -(BOOL) isBetweenStaff:(CGPoint)pos;
 
 -(void) handle2Taps:(UITapGestureRecognizer *)sender;
--(void) handleTaps:(UITapGestureRecognizer *)sender;
+-(void) singleFingerNoteAdd:(UITapGestureRecognizer *)sender;
 
 -(void) findNotePosition:(CGFloat)noteType;
 

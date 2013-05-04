@@ -13,32 +13,33 @@
 @end
 
 @implementation ViewController
-@synthesize scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, tapGestureRecognizer, tapGestureRecognizer2;
+@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, tapGestureRecognizer, tapGestureRecognizer2;
 
 - (void)viewDidLoad
 {
     [super viewDidLoad];
-    screenWidth = 10000;
-    [self initButtionEnable];
+    screenWidth = 20000;
+    [self initButtonEnable];
+    PlayButton.enabled = NO;
+    [PlayButton setBackgroundColor:[UIColor grayColor]];
+    [clearButton setBackgroundColor:[UIColor whiteColor]];
     [scrollView setScrollEnabled:YES];
     [scrollView setContentSize:CGSizeMake(screenWidth, 600)];
     startingStaffY = 180.0f;
     spaceBetweenY = 80.0f;
+    locX = 0;
     allowError = spaceBetweenY/2;
     spaceBetweenX = spaceBetweenY/2;
     numOfNotes = 0;
+    currTrack = 0;
+    musicPlaying = false;
     noteLocations = [[NSMutableArray alloc] init];
     soundURLs = [[NSMutableArray alloc] init];
     soundNumbers = [[NSMutableArray alloc] init];
     for (int i = 48; i <= 97; i++){
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/PIANO_%d.wav", [[NSBundle mainBundle] resourcePath], i]];
         [soundURLs addObject:url];
-        [soundNumbers addObject:[NSNumber numberWithInt:(i-48)]];
     }
-    NSURL *url = [soundURLs objectAtIndex:1];
-    NSError *error;
-    player = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
-    [player setVolume:self.volumeSlider.value];
     
     tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTaps:)];
     tapGestureRecognizer.numberOfTapsRequired = 1;
@@ -49,7 +50,6 @@
     tapGestureRecognizer2.numberOfTouchesRequired = 2;
     tapGestureRecognizer2.numberOfTapsRequired = 1;
     [self.scrollView addGestureRecognizer:tapGestureRecognizer2];
-    
 }
 
 -(BOOL) isOnStaff:(CGPoint)pos
@@ -91,7 +91,7 @@
     CGPoint position = [sender locationInView:sender.view];
     if (sender.state == UIGestureRecognizerStateEnded){
         [self deleteNoteAt:position];
-        NSLog(@"Used 2 taps: %@", NSStringFromCGPoint(position));
+        //NSLog(@"Used 2 taps: %@", NSStringFromCGPoint(position));
     }
 }
 
@@ -101,81 +101,147 @@
     CGPoint position = [sender locationInView:sender.view];
     if (sender.state == UIGestureRecognizerStateEnded){
         if ([self isOnStaff:position]==true){
-            NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
-            [self drawQuarterNote];
-            NSLog(@"locX: %f , %f", locX, locY);
+            //NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
+            [self callDrawNote];
+            //NSLog(@"locX: %f , %f", locX, locY);
         }
         if ([self isBetweenStaff:position]==true){
-            NSLog(@"Between staff - 1: %@", NSStringFromCGPoint(position));
-            [self drawQuarterNote];
-            NSLog(@"locX: %f , %f", locX, locY);
+            //NSLog(@"Between staff - 1: %@", NSStringFromCGPoint(position));
+            [self callDrawNote];
+            //NSLog(@"locX: %f , %f", locX, locY);
         }
-     else
-        {
-            ///MAKE THE BAR OR SPACE HOVERED OVER LIGHT UP
-            ///MAKE THE BAR OR SPACE PLAY THE CORRESPONDING SOUND
-        }
-    
     }
 }
 
--(void) findNotePosition:(CGFloat)noteType
+-(void)callDrawNote
 {
-    if (numOfNotes!=0){
-        //if (locX > screenWidth - allowError)
+    if ([NoteTypeSelector selectedSegmentIndex] == 0)
+        [self findNotePosition:24];
+    else if ([NoteTypeSelector selectedSegmentIndex] == 1)
+        [self findNotePosition:13];
+    else if ([NoteTypeSelector selectedSegmentIndex] == 2)
+        [self findNotePosition:14];
+    else if ([NoteTypeSelector selectedSegmentIndex] == 3)
+        [self findNotePosition:15];
+    else if ([NoteTypeSelector selectedSegmentIndex] == 4)
+        [self findNotePosition:17];
+    else if ([NoteTypeSelector selectedSegmentIndex] == 5)
+        [self findNotePosition:18];
+}
+
+-(void) findNotePosition:(int)noteType
+{
+    CGPoint r;
+    CGRect rect;
+    rect.size.height = spaceBetweenX * 1.7;
+    rect.size.width = spaceBetweenX;
+    locX = locX + spaceBetweenX;
+    if (noteType == 24){
+        r.x = locX;
+        r.y = locY-rect.size.height+35.0;
     }
     else{
-        locX = spaceBetweenX;
+        r.x = locX;
+        r.y = locY-rect.size.height+10.0;
     }
-    CGPoint r;
-    r.x = locX;
-    r.y = locY-allowError/2;
-    CGRect rect;
+    /*if (noteType == 24){
+        if (numOfNotes!=0)
+            locX = locX + spaceBetweenX * 3;
+        else
+            locX = spaceBetweenX;
+    }
+    else if (noteType == 13){
+        if (numOfNotes!=0)
+            locX = locX + spaceBetweenX * 2;
+        else
+            locX = spaceBetweenX;
+    }
+    else{
+        if (numOfNotes!=0)
+            locX = locX + spaceBetweenX;
+        else
+            locX = spaceBetweenX;
+    }*/
     rect.origin = r;
-    rect.size.height = spaceBetweenX;
-    rect.size.width = spaceBetweenX;
+    UIImageView	*image = [[UIImageView alloc] initWithFrame:rect];
+    image.image = [UIImage imageNamed:[NSString stringWithFormat:@"Note %d.png", noteType]];
+    image.contentMode = UIViewContentModeScaleAspectFit;
+    [noteLocations addObject:image];
+    [scrollView addSubview:[noteLocations objectAtIndex:numOfNotes]];
     numOfNotes++;
+    [self initButtonEnable];
+    [self addToSoundArray];
+}
+
+-(void) addToSoundArray
+{
+    int startint = 2;
+    //note after staff
+    if (locY == (startingStaffY + 4 * spaceBetweenY + allowError)){
+        [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+        NSLog(@"inside note out of staff added");
+    }
+    else{
+    for (int i = 0; i < 5; i++){
+        //notes on staff
+        if (locY == (startingStaffY + i * spaceBetweenY)){
+            if (i == 0)
+                startint = 17;
+            else if (i == 1)
+                startint = 14;
+            else if (i == 2)
+                startint = 11;
+            else if (i == 3)
+                startint = 7;
+            else if (i == 4)
+                startint = 4;
+            [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+            NSLog(@"inside note on staff added");
+        }
+        //notes inBetween staff
+        else if (locY == (startingStaffY + i * spaceBetweenY - allowError)){
+            if (i == 0)
+                startint = 19;
+            else if (i == 1)
+                startint = 16;
+            else if (i == 2)
+                startint = 12;
+            else if (i == 3)
+                startint = 9;
+            else if (i == 4)
+                startint = 5;
+            [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+            NSLog(@"inside note between staff added");
+        }
+    }
+    }
+    [self playSelectedNote];
+}
+
+-(void) playSelectedNote
+{
+    int index = [[soundNumbers objectAtIndex:(numOfNotes-1)] intValue];
+    NSURL *url = [soundURLs objectAtIndex:index];
+    NSError *error;
+    audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
+    audioPlayer.numberOfLoops = 0;
+    [audioPlayer setVolume:(volumeSlider.value)];
+    [audioPlayer prepareToPlay];
+    [audioPlayer play];
 }
 
 -(void) deleteNoteAt:(CGPoint)pos
 {
-    /*
-     for (int x = 0; x < numOfNotes; x++){
-     if (pos.x > noteLocations[x].origin.x - allowError/2 && pos.x < noteLocations[x].origin.x + allowError/2){
-     noteLocations[x] = noteLocations[numOfNotes-1];
-     numOfNotes--;
-     }
-     }*/
-    if (numOfNotes >0)
+    if (numOfNotes >0){
         numOfNotes--;
+        [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
+        [noteLocations removeLastObject];
+        [soundNumbers removeLastObject];
+        locX = locX - spaceBetweenX;
+    }
 }
 
--(void) drawWholeNote:(CGPoint)pos
-{
-    
-}
--(void) drawHalfNote:(CGPoint)pos
-{
-    
-}
--(void) drawQuarterNote
-{
-    [self findNotePosition:1];
-}
--(void) draw8thNote:(CGPoint)pos
-{
-    
-}
--(void) draw16thNote:(CGPoint)pos
-{
-    
-}
--(void) draw32ndNote:(CGPoint)pos
-{
-    
-}
-
--(void)initButtionEnable
+-(void)initButtonEnable
 {
     PlayButton.enabled = YES;
     StopButton.enabled = NO;
@@ -214,9 +280,10 @@
 }
 
 - (IBAction)stopMusic:(id)sender {
-    [self initButtionEnable];
-    [player stop];
-    [player setCurrentTime:0];
+    [self initButtonEnable];
+    [audioPlayer stop];
+    [audioPlayer setCurrentTime:0];
+    currTrack = 0;
 }
 
 - (IBAction)saveFile:(id)sender {
@@ -230,17 +297,64 @@
 
 - (IBAction)playMusic:(id)sender {
     [self disableButtons];
-        [player play];
+    int index = [[soundNumbers objectAtIndex:currTrack] intValue];
+    NSURL *url = [soundURLs objectAtIndex:index];
+    currTrack++;
+    NSError *error;
+    audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
+    audioPlayer.delegate = self;
+    audioPlayer.numberOfLoops = 0;
+    [audioPlayer setVolume:(volumeSlider.value)];
+    [audioPlayer prepareToPlay];
+    [audioPlayer play];
+}
+
+-(void)audioPlayerDidFinishPlaying:(AVAudioPlayer *)player successfully:(BOOL)flag
+{
+    if (flag){
+        if (currTrack == numOfNotes){
+            [self initButtonEnable];
+            [audioPlayer stop];
+            [audioPlayer setCurrentTime:0];
+            currTrack = 0;
+        }
+        else if (currTrack < numOfNotes){
+            int index = [[soundNumbers objectAtIndex:currTrack] intValue];
+            NSURL *url = [soundURLs objectAtIndex:index];
+            NSError *error;
+            currTrack++;
+            audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
+            audioPlayer.delegate = self;
+            audioPlayer.numberOfLoops = 0;
+            [audioPlayer setVolume:(volumeSlider.value)];
+            [audioPlayer prepareToPlay];
+            [audioPlayer play];
+        }
+    }
 }
 
 - (IBAction)pauseMusic:(id)sender {
-    [self initButtionEnable];
+    [self initButtonEnable];
     StopButton.enabled = YES;
     [StopButton setBackgroundColor:[UIColor whiteColor]];
-    [player pause];
+    [audioPlayer pause];
+}
+
+- (IBAction)clearNotes:(id)sender {
+    [self initButtonEnable];
+    PlayButton.enabled = NO;
+    [PlayButton setBackgroundColor:[UIColor grayColor]];
+    while (numOfNotes >0){
+        numOfNotes--;
+        [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
+        [noteLocations removeLastObject];
+        [soundNumbers removeLastObject];
+    }
+    currTrack = 0;
+    locX = 0;
 }
 
 - (IBAction)volumeChange:(id)sender {
-    [player setVolume:volumeSlider.value];
+    [audioPlayer setVolume:(volumeSlider.value)];
 }
 @end

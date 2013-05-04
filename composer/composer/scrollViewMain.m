@@ -21,7 +21,7 @@
     allowError = spaceBetweenY/2;
     spaceBetweenX = spaceBetweenY/2;
     numOfNotes = 0;
-    noteLocations = malloc(sizeof(CGPoint)*1000);
+    noteLocations = malloc(sizeof(CGRect)*5000);
     
     self = [super initWithCoder:aDecoder];
     if (self) {
@@ -136,6 +136,10 @@
     rect.size.height = spaceBetweenX;
     rect.size.width = spaceBetweenX;
     noteLocations[numOfNotes] = rect;
+    UIImageView	*image = [[UIImageView alloc] initWithFrame:rect];
+    image.image = [UIImage imageNamed:[NSString stringWithFormat:@"Note 14.png"]];
+    image.contentMode = UIViewContentModeScaleAspectFit;
+    [self addSubview:image];
     numOfNotes++;
 }
 

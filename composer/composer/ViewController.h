@@ -11,12 +11,16 @@
 #import <AVFoundation/AVFoundation.h>
 
 @interface ViewController : UIViewController
+<AVAudioPlayerDelegate>
 {
-    AVAudioPlayer *player;
+    AVAudioPlayer *audioPlayer;
     AVQueuePlayer *queueplayer;
+    bool musicPlaying;
+    int currTrack;
     CGFloat locX;
     CGFloat locY;
     int numOfNotes;
+    int pngNum;
     CGFloat spaceBetweenX;
     CGFloat spaceBetweenY;
     CGFloat startingStaffY;
@@ -28,6 +32,7 @@
     NSMutableArray *soundNumbers;
 }
 
+@property (nonatomic, retain) AVAudioPlayer *audioPlayer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer2;
 
@@ -37,16 +42,9 @@
 -(void) handle2Taps:(UITapGestureRecognizer *)sender;
 -(void) handleTaps:(UITapGestureRecognizer *)sender;
 
--(void) findNotePosition:(CGFloat)noteType;
+-(void) findNotePosition:(int)noteType;
 
 -(void) deleteNoteAt:(CGPoint)pos;
-
--(void) drawWholeNote:(CGPoint)pos;
--(void) drawHalfNote:(CGPoint)pos;
--(void) drawQuarterNote;
--(void) draw8thNote:(CGPoint)pos;
--(void) draw16thNote:(CGPoint)pos;
--(void) draw32ndNote:(CGPoint)pos;
 
 @property (weak, nonatomic) IBOutlet UISlider *volumeSlider;
 @property (retain, nonatomic) IBOutlet UIButton *PlayButton;
@@ -55,10 +53,12 @@
 @property (retain, nonatomic) IBOutlet UIButton *OpenButton;
 @property (weak, nonatomic) IBOutlet UIButton *SettingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *pauseButton;
+@property (weak, nonatomic) IBOutlet UIButton *clearButton;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *NoteTypeSelector;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;
 
+- (IBAction)clearNotes:(id)sender;
 
 - (IBAction)volumeChange:(id)sender;
 - (IBAction)playMusic:(id)sender;

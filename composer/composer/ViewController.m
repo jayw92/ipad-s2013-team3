@@ -13,7 +13,7 @@
 @end
 
 @implementation ViewController
-@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, tapGestureRecognizer, tapGestureRecognizer2;
+@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2;
 
 - (void)viewDidLoad
 {
@@ -34,6 +34,7 @@
     currTrack = 0;
     musicPlaying = false;
     noteLocations = [[NSMutableArray alloc] init];
+    accidentLocations = [[NSMutableArray alloc] init];
     soundURLs = [[NSMutableArray alloc] init];
     soundNumbers = [[NSMutableArray alloc] init];
     for (int i = 48; i <= 97; i++){
@@ -161,19 +162,41 @@
             locX = locX + spaceBetweenX;
         else
             locX = spaceBetweenX;
-    }*/
+     }*/
+    
+    CGPoint r2;
+    CGRect rect2;
+    rect2.size.width = spaceBetweenX*0.3;
+    rect2.size.height = spaceBetweenX;
+    r2.x=r.x;
+    r2.y = r.y + 35.0;
+    rect2.origin = r2;
+    UIImageView *image2 = [[UIImageView alloc] initWithFrame:rect2];
+    if (accidentSelector.selectedSegmentIndex != 2){
+        if (accidentSelector.selectedSegmentIndex == 0)
+            image2.image = [UIImage imageNamed:[NSString stringWithFormat:@"sharp.png"]];
+        else if (accidentSelector.selectedSegmentIndex == 1)
+            image2.image = [UIImage imageNamed:[NSString stringWithFormat:@"natural.png"]];
+        else if (accidentSelector.selectedSegmentIndex == 3)
+            image2.image = [UIImage imageNamed:[NSString stringWithFormat:@"flat.png"]];
+        image2.contentMode = UIViewContentModeScaleAspectFit;
+        [scrollView addSubview:image2];
+        locX = locX + spaceBetweenX*0.3;
+        r.x = locX;
+    }
     rect.origin = r;
     UIImageView	*image = [[UIImageView alloc] initWithFrame:rect];
     image.image = [UIImage imageNamed:[NSString stringWithFormat:@"Note %d.png", noteType]];
     image.contentMode = UIViewContentModeScaleAspectFit;
+    [accidentLocations addObject:image2];
     [noteLocations addObject:image];
     [scrollView addSubview:[noteLocations objectAtIndex:numOfNotes]];
     numOfNotes++;
     [self initButtonEnable];
-    [self addToSoundArray];
+    [self addToSoundArray:5];
 }
 
--(void) addToSoundArray
+-(void) addToSoundArray:(int) MIDINumber
 {
     int startint = 2;
     //note after staff
@@ -235,6 +258,9 @@
     if (numOfNotes >0){
         numOfNotes--;
         [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
+        [[accidentLocations objectAtIndex:numOfNotes] removeFromSuperview];
+        
+        [accidentLocations removeLastObject];
         [noteLocations removeLastObject];
         [soundNumbers removeLastObject];
         locX = locX - spaceBetweenX;
@@ -347,9 +373,10 @@
     while (numOfNotes >0){
         numOfNotes--;
         [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
-        [noteLocations removeLastObject];
-        [soundNumbers removeLastObject];
+        [[accidentLocations objectAtIndex:numOfNotes] removeFromSuperview];
     }
+    [noteLocations removeAllObjects];
+    [soundNumbers removeAllObjects];
     currTrack = 0;
     locX = 0;
 }

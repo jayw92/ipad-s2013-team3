@@ -28,6 +28,7 @@
     CGFloat screenWidth;
     CGContextRef context;
     NSMutableArray *noteLocations;
+    NSMutableArray *accidentLocations;
     NSMutableArray *soundURLs;
     NSMutableArray *soundNumbers;
 }
@@ -35,6 +36,7 @@
 @property (nonatomic, retain) AVAudioPlayer *audioPlayer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer2;
+@property (weak, nonatomic) IBOutlet UISegmentedControl *accidentSelector;
 
 -(BOOL) isOnStaff:(CGPoint)pos;
 -(BOOL) isBetweenStaff:(CGPoint)pos;

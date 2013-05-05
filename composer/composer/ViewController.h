@@ -2,7 +2,7 @@
 //  ViewController.h
 //  composer
 //
-//  Created by Jay Wang on 3/10/13.
+//  Created by Jay Wang, Eric Mariasis, and Scott Jacobson.
 //  Copyright (c) 2013 SoundStorm. All rights reserved.
 //
 

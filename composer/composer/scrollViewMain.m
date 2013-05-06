@@ -17,7 +17,7 @@
 -(id)initWithCoder:(NSCoder *)aDecoder
 {
     startingStaffY = 180.0f;
-    spaceBetweenY = 80.0f;
+    spaceBetweenY = 84.0f;
     allowError = spaceBetweenY/2;
     spaceBetweenX = spaceBetweenY/2;
     numOfNotes = 0;

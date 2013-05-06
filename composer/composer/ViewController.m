@@ -13,7 +13,8 @@
 @end
 
 @implementation ViewController
-@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2;
+@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2, keyButton, keyPC, keyAC;
+
 
 - (void)viewDidLoad
 {
@@ -21,17 +22,18 @@
     screenWidth = 20000;
     [self initButtonEnable];
     PlayButton.enabled = NO;
-    [PlayButton setBackgroundColor:[UIColor grayColor]];
-    [clearButton setBackgroundColor:[UIColor whiteColor]];
+//    [PlayButton setBackgroundColor:[UIColor grayColor]];
+//    [clearButton setBackgroundColor:[UIColor whiteColor]];
     [scrollView setScrollEnabled:YES];
     [scrollView setContentSize:CGSizeMake(screenWidth, 600)];
     startingStaffY = 180.0f;
-    spaceBetweenY = 80.0f;
+    spaceBetweenY = 84.0f;
     locX = 0;
     allowError = spaceBetweenY/2;
     spaceBetweenX = spaceBetweenY/2;
     numOfNotes = 0;
     currTrack = 0;
+    tempStartSoundInt = 2;
     musicPlaying = false;
     noteLocations = [[NSMutableArray alloc] init];
     accidentLocations = [[NSMutableArray alloc] init];
@@ -53,6 +55,20 @@
     [self.scrollView addGestureRecognizer:tapGestureRecognizer2];
 }
 
+-(IBAction)keyClick:(id)sender
+{
+    if (keyAC == nil && keyPC== nil) {
+        keyAC = [[KeySelectView alloc] initWithNibName:@"KeySelectView" bundle:nil];
+        keyPC = [[UIPopoverController alloc] initWithContentViewController:keyAC];
+    }
+    if ([keyPC isPopoverVisible]) {
+        [keyPC dismissPopoverAnimated:YES];
+    }
+    else {
+        [keyPC presentPopoverFromRect:keyButton.bounds inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
+    }
+}
+
 -(BOOL) isOnStaff:(CGPoint)pos
 {
     CGFloat y = pos.y;
@@ -70,12 +86,14 @@
 {
     if ([self isOnStaff:pos]==false){
         if ((pos.y > startingStaffY-allowError) && (pos.y < startingStaffY + allowError + 4*spaceBetweenY)){
-            if (pos.y > startingStaffY + 4 * spaceBetweenY){
+            if (pos.y > startingStaffY + 4 * spaceBetweenY)
+            {
                 locY = startingStaffY + 4 * spaceBetweenY + allowError;
                 return true;
             }
             for (int i = 0; i < 5; i++){
-                if (pos.y < startingStaffY + i * spaceBetweenY){
+                if (pos.y < startingStaffY + i * spaceBetweenY)
+                {
                     locY = startingStaffY + i * spaceBetweenY - allowError;
                     return true;
                 }
@@ -96,26 +114,92 @@
     }
 }
 
+-(barOrSpaceNumber) getVerticalDropzoneOnStaff:(CGPoint *) position
+{
+    int bottom = (startingStaffY-(3*(spaceBetweenY/4)));
+    int dist_from_bottom = position->y - bottom;
+    
+//    NSLog(@"The Distance from Bottom is %d", dist_from_bottom);
+    
+    if (dist_from_bottom > -1)
+    {        
+        int divsUp = dist_from_bottom/(spaceBetweenY/12);
+        int spotsUp = divsUp/6;
+        NSLog(@"The spot is in divsUP %d and the spots up is %d",divsUp, spotsUp);
+        
+        locY = bottom + spotsUp*(spaceBetweenY/2);
+        return spotsUp;
+    }
+    
+    return -1;
+}
+
 //Add to staff
 -(void) handleTaps:(UITapGestureRecognizer *)sender
 {
     CGPoint position = [sender locationInView:sender.view];
-    if (sender.state == UIGestureRecognizerStateEnded){
-        if ([self isOnStaff:position]==true){
+    
+    tempBarOrSpace = [self getVerticalDropzoneOnStaff:&position];
+    
+    NSLog(@"WE'RE ON DROPZONE %d",tempBarOrSpace);
+    
+ 
+    //             int distanceFromBottom =  pos.y - (startingStaffY - allowError);
+    //             int barOrSpaceNumber =      distanceFromBottom/spaceBetweenY;
+    //
+    
+    if (sender.state == UIGestureRecognizerStateEnded)
+    {
+
+        if ([self isOnStaff:position]==true)
+        {
             //NSLog(@"On staff - 1: %@", NSStringFromCGPoint(position));
             [self callDrawNote];
             //NSLog(@"locX: %f , %f", locX, locY);
         }
-        if ([self isBetweenStaff:position]==true){
+        if ([self isBetweenStaff:position]==true)
+        {
             //NSLog(@"Between staff - 1: %@", NSStringFromCGPoint(position));
             [self callDrawNote];
             //NSLog(@"locX: %f , %f", locX, locY);
         }
+        
+    }
+    else
+    {
+        //swag
     }
 }
 
 -(void)callDrawNote
 {
+
+    switch ([NoteTypeSelector selectedSegmentIndex])
+    {
+        case 0:
+            [self findNotePosition:24];
+            break;
+        case 1:
+            [self findNotePosition:13];
+            break;
+        case 2:
+            [self findNotePosition:14];
+            break;
+        case 3:
+            [self findNotePosition:15];
+            break;
+        case 4:
+            [self findNotePosition:17];
+            break;
+        case 5:
+            [self findNotePosition:18];
+            break;
+            
+        default:
+            break;
+    }
+ 
+/*
     if ([NoteTypeSelector selectedSegmentIndex] == 0)
         [self findNotePosition:24];
     else if ([NoteTypeSelector selectedSegmentIndex] == 1)
@@ -128,6 +212,8 @@
         [self findNotePosition:17];
     else if ([NoteTypeSelector selectedSegmentIndex] == 5)
         [self findNotePosition:18];
+*/
+    
 }
 
 -(void) findNotePosition:(int)noteType
@@ -193,51 +279,122 @@
     [scrollView addSubview:[noteLocations objectAtIndex:numOfNotes]];
     numOfNotes++;
     [self initButtonEnable];
-    [self addToSoundArray:5];
+//    [self findMIDINumber];
+    [self addToSoundArray];
 }
 
--(void) addToSoundArray:(int) MIDINumber
+-(void) addMIDIModifiers
 {
-    int startint = 2;
+    //bool isSharpened = false;
+    //bool isFlatted = false;
+    //bool isNatural = true;
+    
+   /* switch (tempBarOrSpace)
+    {
+        case 0:
+            tempMIDINumber = 19;
+            break;
+        case 1:
+            tempMIDINumber = 17;
+            break;
+        case 3:
+            tempMIDINumber = 16;
+            break;
+        case 4:
+            tempMIDINumber = 14;
+            break;
+        case 5:
+            tempMIDINumber = 12;
+            break;
+        case 6:
+            tempMIDINumber = 11;
+            break;
+        case 7:
+            tempMIDINumber = 9;
+            break;
+        case 8:
+            tempMIDINumber = 7;
+            break;
+        case 9:
+            tempMIDINumber = 5;
+            break;
+        case 10:
+            tempMIDINumber = 4;
+            break;
+        default:
+            break;
+            
+    }*/
+    
+    switch  (accidentSelector.selectedSegmentIndex)
+    {
+        case 0:
+            tempStartSoundInt++;
+            break;
+        case 1:
+            break;
+        case 2:
+            break;
+        case 3:
+            tempStartSoundInt --;
+            break;
+    }
+    
+NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
+
+}
+
+-(void) addToSoundArray
+{
+    tempStartSoundInt = 2;
     //note after staff
-    if (locY == (startingStaffY + 4 * spaceBetweenY + allowError)){
-        [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+    
+    
+    if (locY == (startingStaffY + 4 * spaceBetweenY + allowError))
+    {
+        [self addMIDIModifiers];
+        [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
         NSLog(@"inside note out of staff added");
     }
     else{
     for (int i = 0; i < 5; i++){
         //notes on staff
-        if (locY == (startingStaffY + i * spaceBetweenY)){
+        if (locY == (startingStaffY + i * spaceBetweenY))
+        {
             if (i == 0)
-                startint = 17;
+                tempStartSoundInt = 17;
             else if (i == 1)
-                startint = 14;
+                tempStartSoundInt = 14;
             else if (i == 2)
-                startint = 11;
+                tempStartSoundInt = 11;
             else if (i == 3)
-                startint = 7;
+                tempStartSoundInt = 7;
             else if (i == 4)
-                startint = 4;
-            [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+                tempStartSoundInt = 4;
+            [self addMIDIModifiers];
+            [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
             NSLog(@"inside note on staff added");
         }
         //notes inBetween staff
         else if (locY == (startingStaffY + i * spaceBetweenY - allowError)){
             if (i == 0)
-                startint = 19;
+                tempStartSoundInt = 19;
             else if (i == 1)
-                startint = 16;
+                tempStartSoundInt = 16;
             else if (i == 2)
-                startint = 12;
+                tempStartSoundInt = 12;
             else if (i == 3)
-                startint = 9;
+                tempStartSoundInt = 9;
             else if (i == 4)
-                startint = 5;
-            [soundNumbers addObject:[NSNumber numberWithInt:(startint)]];
+                tempStartSoundInt = 5;
+            [self addMIDIModifiers];
+            [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
             NSLog(@"inside note between staff added");
         }
     }
     }
+    ;
+//    [soundNumbers addObject:[NSNumber numberWithInt:(tempMIDINumber)]];
     [self playSelectedNote];
 }
 
@@ -275,12 +432,12 @@
     OpenButton.enabled = YES;
     SettingsButton.enabled = YES;
     pauseButton.enabled = NO;
-    [StopButton setBackgroundColor:[UIColor grayColor]];
-    [pauseButton setBackgroundColor:[UIColor grayColor]];
-    [PlayButton setBackgroundColor:[UIColor whiteColor]];
-    [SaveButton setBackgroundColor:[UIColor whiteColor]];
-    [OpenButton setBackgroundColor:[UIColor whiteColor]];
-    [SettingsButton setBackgroundColor:[UIColor whiteColor]];
+//    [StopButton setBackgroundColor:[UIColor grayColor]];
+//    [pauseButton setBackgroundColor:[UIColor grayColor]];
+//    [PlayButton setBackgroundColor:[UIColor whiteColor]];
+//    [SaveButton setBackgroundColor:[UIColor whiteColor]];
+//    [OpenButton setBackgroundColor:[UIColor whiteColor]];
+//    [SettingsButton setBackgroundColor:[UIColor whiteColor]];
 }
 
 -(void)disableButtons
@@ -291,12 +448,12 @@
     SaveButton.enabled = NO;
     OpenButton.enabled = NO;
     SettingsButton.enabled = NO;
-    [StopButton setBackgroundColor:[UIColor whiteColor]];
-    [pauseButton setBackgroundColor:[UIColor whiteColor]];
-    [PlayButton setBackgroundColor:[UIColor grayColor]];
-    [SaveButton setBackgroundColor:[UIColor grayColor]];
-    [OpenButton setBackgroundColor:[UIColor grayColor]];
-    [SettingsButton setBackgroundColor:[UIColor grayColor]];
+//    [StopButton setBackgroundColor:[UIColor whiteColor]];
+//    [pauseButton setBackgroundColor:[UIColor whiteColor]];
+//    [PlayButton setBackgroundColor:[UIColor grayColor]];
+//    [SaveButton setBackgroundColor:[UIColor grayColor]];
+//    [OpenButton setBackgroundColor:[UIColor grayColor]];
+//    [SettingsButton setBackgroundColor:[UIColor grayColor]];
 }
 
 - (void)didReceiveMemoryWarning
@@ -369,7 +526,7 @@
 - (IBAction)clearNotes:(id)sender {
     [self initButtonEnable];
     PlayButton.enabled = NO;
-    [PlayButton setBackgroundColor:[UIColor grayColor]];
+//    [PlayButton setBackgroundColor:[UIColor grayColor]];
     while (numOfNotes >0){
         numOfNotes--;
         [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];

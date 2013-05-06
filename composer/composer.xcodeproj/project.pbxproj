@@ -7,6 +7,9 @@
 	objects = {
 
 /* Begin PBXBuildFile section */
+		61A580F91737AA3600FFC1AE /* KeySelectView.h in Sources */ = {isa = PBXBuildFile; fileRef = 61A580F61737A62A00FFC1AE /* KeySelectView.h */; };
+		61A580FA1737AA3600FFC1AE /* KeySelectView.m in Sources */ = {isa = PBXBuildFile; fileRef = 61A580F71737A62A00FFC1AE /* KeySelectView.m */; };
+		61A580FB1737AA3600FFC1AE /* KeySelectView.xib in Sources */ = {isa = PBXBuildFile; fileRef = 61A580F81737A62A00FFC1AE /* KeySelectView.xib */; };
 		61B11E1E1736EB15003D3596 /* flat.png in Resources */ = {isa = PBXBuildFile; fileRef = 61B11E1B1736EB0F003D3596 /* flat.png */; };
 		61B11E1F1736EB15003D3596 /* natural.png in Resources */ = {isa = PBXBuildFile; fileRef = 61B11E1C1736EB10003D3596 /* natural.png */; };
 		61B11E201736EB15003D3596 /* sharp.png in Resources */ = {isa = PBXBuildFile; fileRef = 61B11E1D1736EB12003D3596 /* sharp.png */; };
@@ -111,6 +114,9 @@
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
+		61A580F61737A62A00FFC1AE /* KeySelectView.h */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.h; path = KeySelectView.h; sourceTree = "<group>"; };
+		61A580F71737A62A00FFC1AE /* KeySelectView.m */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.c.objc; path = KeySelectView.m; sourceTree = "<group>"; };
+		61A580F81737A62A00FFC1AE /* KeySelectView.xib */ = {isa = PBXFileReference; lastKnownFileType = file.xib; path = KeySelectView.xib; sourceTree = "<group>"; };
 		61B11E1B1736EB0F003D3596 /* flat.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = flat.png; sourceTree = "<group>"; };
 		61B11E1C1736EB10003D3596 /* natural.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = natural.png; sourceTree = "<group>"; };
 		61B11E1D1736EB12003D3596 /* sharp.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = sharp.png; sourceTree = "<group>"; };
@@ -336,6 +342,9 @@
 				F910BDED172750500032AA34 /* View.xib */,
 				F99A7E4B16ED2FBA005F5A1B /* ViewController.h */,
 				F99A7E4C16ED2FBA005F5A1B /* ViewController.m */,
+				61A580F61737A62A00FFC1AE /* KeySelectView.h */,
+				61A580F71737A62A00FFC1AE /* KeySelectView.m */,
+				61A580F81737A62A00FFC1AE /* KeySelectView.xib */,
 				F99A7E5C16ED33F6005F5A1B /* PDFViewController.h */,
 				F99A7E5D16ED33F6005F5A1B /* PDFViewController.m */,
 				F910BDF2172769440032AA34 /* scrollViewMain.h */,
@@ -552,6 +561,9 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				61A580F91737AA3600FFC1AE /* KeySelectView.h in Sources */,
+				61A580FA1737AA3600FFC1AE /* KeySelectView.m in Sources */,
+				61A580FB1737AA3600FFC1AE /* KeySelectView.xib in Sources */,
 				F99A7E4016ED2FBA005F5A1B /* main.m in Sources */,
 				F99A7E4416ED2FBA005F5A1B /* composerAppDelegate.m in Sources */,
 				F99A7E4D16ED2FBA005F5A1B /* ViewController.m in Sources */,

@@ -9,6 +9,12 @@
 #import <UIKit/UIKit.h>
 #import <QuartzCore/QuartzCore.h>
 #import <AVFoundation/AVFoundation.h>
+#import "KeySelectView.h"
+
+
+typedef int barOrSpaceNumber;
+typedef int noteMIDINumber;
+typedef int keyNumber;
 
 @interface ViewController : UIViewController
 <AVAudioPlayerDelegate>
@@ -21,6 +27,10 @@
     CGFloat locY;
     int numOfNotes;
     int pngNum;
+    barOrSpaceNumber tempBarOrSpace;
+    noteMIDINumber tempMIDINumber;
+    keyNumber currentKey;
+    int tempStartSoundInt;
     CGFloat spaceBetweenX;
     CGFloat spaceBetweenY;
     CGFloat startingStaffY;
@@ -33,10 +43,17 @@
     NSMutableArray *soundNumbers;
 }
 
+@property (strong, nonatomic) IBOutlet UIButton *keyButton;
+@property (strong, nonatomic) KeySelectView* keyAC;
+@property (strong, nonatomic) UIPopoverController *keyPC;
+
+
 @property (nonatomic, retain) AVAudioPlayer *audioPlayer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer;
 @property (nonatomic, retain)UITapGestureRecognizer *tapGestureRecognizer2;
 @property (weak, nonatomic) IBOutlet UISegmentedControl *accidentSelector;
+
+-(IBAction)keyClick:(id)sender;
 
 -(BOOL) isOnStaff:(CGPoint)pos;
 -(BOOL) isBetweenStaff:(CGPoint)pos;

@@ -9,11 +9,14 @@
 #import "ViewController.h"
 
 @interface ViewController ()
-
+- (void)measurementWasSelectedWithBigUnit:(NSNumber *)bigUnit smallUnit:(NSNumber *)smallUnit element:(id)element;
+- (void)dateWasSelected:(NSDate *)selectedDate element:(id)element;
+- (void)keyWasSelected:(NSNumber *)selectedIndex element:(id)element;
 @end
 
 @implementation ViewController
-@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2, keyButton, keyPC, keyAC;
+
+@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2, keyButton, cleffOver;
 
 
 - (void)viewDidLoad
@@ -28,7 +31,7 @@
     [scrollView setContentSize:CGSizeMake(screenWidth, 600)];
     startingStaffY = 180.0f;
     spaceBetweenY = 84.0f;
-    locX = 0;
+    locX = 370;
     allowError = spaceBetweenY/2;
     spaceBetweenX = spaceBetweenY/2;
     numOfNotes = 0;
@@ -37,11 +40,21 @@
     musicPlaying = false;
     noteLocations = [[NSMutableArray alloc] init];
     accidentLocations = [[NSMutableArray alloc] init];
-    soundURLs = [[NSMutableArray alloc] init];
+    pianoURLs = [[NSMutableArray alloc] init];
+    bassURLs = [[NSMutableArray alloc] init];
+    guitarURLs = [[NSMutableArray alloc] init];
+    stringsURLs = [[NSMutableArray alloc] init];
     soundNumbers = [[NSMutableArray alloc] init];
+    noteTypes = [[NSMutableArray alloc] init];
     for (int i = 48; i <= 97; i++){
         NSURL *url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/PIANO_%d.wav", [[NSBundle mainBundle] resourcePath], i]];
-        [soundURLs addObject:url];
+        [pianoURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/GUITAR_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [guitarURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/STRINGS_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [stringsURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/BASS_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [bassURLs addObject:url];
     }
     
     tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTaps:)];
@@ -53,21 +66,143 @@
     tapGestureRecognizer2.numberOfTouchesRequired = 2;
     tapGestureRecognizer2.numberOfTapsRequired = 1;
     [self.scrollView addGestureRecognizer:tapGestureRecognizer2];
+    self.selectedIndex = 5;
+    [self drawCleff];
+    self.keys = [NSArray arrayWithObjects:  @"D♭ major", @"A♭ major", @"E♭ major", @"B♭ major", @"F major", @"C major", @"G major", @"D major",@"A major", @"E major", @"B major", @"F♯ major",   nil];
+    self.instruments = [NSArray arrayWithObjects:  @"Piano", @"Strings", @"Bass", @"Guitar",   nil];
+
 }
 
--(IBAction)keyClick:(id)sender
+
+
+
+
+
+
+
+///////////////////////////KEY SELECTOR VIEW///////////////////////////////
+
+
+
+
+
+
+@synthesize keyTextField = _keyTextField;
+
+@synthesize keys = _keys;
+@synthesize selectedIndex = _selectedIndex;
+@synthesize selectedInstrument = _selectedInstrument;
+@synthesize selectedDate = _selectedDate;
+@synthesize selectedBigUnit = _selectedBigUnit;
+@synthesize selectedSmallUnit = _selectedSmallUnit;
+@synthesize actionSheetPicker = _actionSheetPicker;
+
+
+- (BOOL)shouldAutorotateToInterfaceOrientation:(UIInterfaceOrientation)interfaceOrientation
 {
-    if (keyAC == nil && keyPC== nil) {
-        keyAC = [[KeySelectView alloc] initWithNibName:@"KeySelectView" bundle:nil];
-        keyPC = [[UIPopoverController alloc] initWithContentViewController:keyAC];
-    }
-    if ([keyPC isPopoverVisible]) {
-        [keyPC dismissPopoverAnimated:YES];
-    }
-    else {
-        [keyPC presentPopoverFromRect:keyButton.bounds inView:self.view permittedArrowDirections:UIPopoverArrowDirectionAny animated:YES];
-    }
+    return YES;
 }
+
+
+#pragma mark - IBActions
+
+
+
+- (IBAction)selectAKey:(UIControl *)sender {
+    [ActionSheetStringPicker showPickerWithTitle:@"Select A Key" rows:self.keys initialSelection:self.selectedIndex target:self successAction:@selector(keyWasSelected:element:) cancelAction:@selector(actionPickerCancelled:) origin:sender];
+    
+    /* Example ActionSheetPicker using customButtons
+     self.actionSheetPicker = [[ActionSheetPicker alloc] initWithTitle@"Select Key" rows:self.keys initialSelection:self.selectedIndex target:self successAction:@selector(itemWasSelected:element:) cancelAction:@selector(actionPickerCancelled:) origin:sender
+     
+     [self.actionSheetPicker addCustomButtonWithTitle:@"Special" value:[NSNumber numberWithInt:1]];
+     self.actionSheetPicker.hideCancel = YES;
+     [self.actionSheetPicker showActionSheetPicker];
+     */
+}
+
+- (IBAction)keyButtonTapped:(UIBarButtonItem *)sender {
+    [self selectAKey:sender];
+}
+
+
+
+
+#pragma mark - Implementation
+
+- (void)keyWasSelected:(NSNumber *)selectedIndex element:(id)element
+{
+    self.selectedIndex = [selectedIndex intValue];
+    
+    //may have originated from textField or barButtonItem, use an IBOutlet instead of element
+    NSString *keyName = [self.keys objectAtIndex:self.selectedIndex];
+    currentKey = self.selectedIndex - 5;
+
+    NSLog(@"The key was selected as %d", currentKey);
+    NSLog(@"The key was selected as %@", keyName);
+    [keyButton setTitle:keyName forState:UIControlStateNormal];
+    [self drawCleff];
+}
+
+- (void)actionPickerCancelled:(id)sender {
+    NSLog(@"Delegate has been informed that ActionSheetPicker was cancelled");
+}
+
+#pragma mark - UITextFieldDelegate
+
+- (BOOL)textFieldShouldBeginEditing:(UITextField *)textField {
+    return NO;
+}
+
+
+
+/////////////////////////////////////////////////////////////
+
+
+
+
+
+
+- (IBAction)selectAnInstrument:(UIControl *)sender {
+    [ActionSheetStringPicker showPickerWithTitle:@"Select An Instrument" rows:self.instruments initialSelection:self.selectedInstrument target:self successAction:@selector(instrumentWasSelected:element:) cancelAction:@selector(actionPickerCancelled:) origin:sender];
+    
+    /* Example ActionSheetPicker using customButtons
+     self.actionSheetPicker = [[ActionSheetPicker alloc] initWithTitle@"Select Key" rows:self.keys initialSelection:self.selectedIndex target:self successAction:@selector(itemWasSelected:element:) cancelAction:@selector(actionPickerCancelled:) origin:sender
+     
+     [self.actionSheetPicker addCustomButtonWithTitle:@"Special" value:[NSNumber numberWithInt:1]];
+     self.actionSheetPicker.hideCancel = YES;
+     [self.actionSheetPicker showActionSheetPicker];
+     */
+}
+
+- (IBAction)instrumentButtonTapped:(UIBarButtonItem *)sender {
+    [self selectAnInstrument:sender];
+}
+
+
+
+
+#pragma mark - Implementation
+
+- (void)instrumentWasSelected:(NSNumber *)selectedIndex element:(id)element
+{
+    self.selectedInstrument = [selectedIndex intValue];
+    
+    //may have originated from textField or barButtonItem, use an IBOutlet instead of element
+    NSString *instrumentName = [self.instruments objectAtIndex:self.selectedInstrument];
+    
+    NSLog(@"The instrument was selected as %d", self.selectedInstrument);
+    NSLog(@"The instrument was selected as %@", instrumentName);
+    [_instrumentButton setTitle:instrumentName forState:UIControlStateNormal];
+    
+}
+
+
+/////////////////////////////////////////////////////////////
+
+
+
+
+
 
 -(BOOL) isOnStaff:(CGPoint)pos
 {
@@ -125,7 +260,7 @@
     {        
         int divsUp = dist_from_bottom/(spaceBetweenY/12);
         int spotsUp = divsUp/6;
-        NSLog(@"The spot is in divsUP %d and the spots up is %d",divsUp, spotsUp);
+//        NSLog(@"The spot is in divsUP %d and the spots up is %d",divsUp, spotsUp);
         
         locY = bottom + spotsUp*(spaceBetweenY/2);
         return spotsUp;
@@ -141,7 +276,6 @@
     
     tempBarOrSpace = [self getVerticalDropzoneOnStaff:&position];
     
-    NSLog(@"WE'RE ON DROPZONE %d",tempBarOrSpace);
     
  
     //             int distanceFromBottom =  pos.y - (startingStaffY - allowError);
@@ -216,6 +350,24 @@
     
 }
 
+-(void) drawCleff
+{
+    if (cleff.image != NULL)
+    {
+        [cleff removeFromSuperview];
+    }
+    CGPoint r;
+    CGRect rect;
+    rect.size.height = 610;
+    rect.size.width = 750;
+    r.x = 20;
+    r.y = 70;
+    cleff = [[UIImageView alloc] initWithFrame:rect];
+    cleff.image = [UIImage imageNamed:[NSString stringWithFormat:@"key%d.png", currentKey]];
+    cleff.contentMode = UIViewContentModeLeft;
+    [cleffOver addSubview:cleff];
+}
+
 -(void) findNotePosition:(int)noteType
 {
     CGPoint r;
@@ -224,31 +376,16 @@
     rect.size.width = spaceBetweenX;
     locX = locX + spaceBetweenX;
     if (noteType == 24){
-        r.x = locX;
+        locX = locX + spaceBetweenX*2;
         r.y = locY-rect.size.height+35.0;
     }
     else{
-        r.x = locX;
         r.y = locY-rect.size.height+10.0;
     }
-    /*if (noteType == 24){
-        if (numOfNotes!=0)
-            locX = locX + spaceBetweenX * 3;
-        else
-            locX = spaceBetweenX;
+    if (noteType == 13){
+        locX = locX + spaceBetweenX;
     }
-    else if (noteType == 13){
-        if (numOfNotes!=0)
-            locX = locX + spaceBetweenX * 2;
-        else
-            locX = spaceBetweenX;
-    }
-    else{
-        if (numOfNotes!=0)
-            locX = locX + spaceBetweenX;
-        else
-            locX = spaceBetweenX;
-     }*/
+    r.x = locX;
     
     CGPoint r2;
     CGRect rect2;
@@ -256,6 +393,7 @@
     rect2.size.height = spaceBetweenX;
     r2.x=r.x;
     r2.y = r.y + 35.0;
+    
     rect2.origin = r2;
     UIImageView *image2 = [[UIImageView alloc] initWithFrame:rect2];
     if (accidentSelector.selectedSegmentIndex != 2){
@@ -273,6 +411,7 @@
     rect.origin = r;
     UIImageView	*image = [[UIImageView alloc] initWithFrame:rect];
     image.image = [UIImage imageNamed:[NSString stringWithFormat:@"Note %d.png", noteType]];
+    [noteTypes addObject:[NSNumber numberWithInt:(noteType)]];
     image.contentMode = UIViewContentModeScaleAspectFit;
     [accidentLocations addObject:image2];
     [noteLocations addObject:image];
@@ -289,42 +428,82 @@
     //bool isFlatted = false;
     //bool isNatural = true;
     
-   /* switch (tempBarOrSpace)
+    switch (tempStartSoundInt)
     {
-        case 0:
-            tempMIDINumber = 19;
+        case 19:
+            if (currentKey > 2)
+            {tempStartSoundInt++;}
+            else if (currentKey < -4)
+            {tempStartSoundInt--;}// top G space
             break;
-        case 1:
-            tempMIDINumber = 17;
-            break;
-        case 3:
-            tempMIDINumber = 16;
-            break;
-        case 4:
-            tempMIDINumber = 14;
-            break;
-        case 5:
-            tempMIDINumber = 12;
-            break;
-        case 6:
-            tempMIDINumber = 11;
-            break;
-        case 7:
-            tempMIDINumber = 9;
-            break;
-        case 8:
-            tempMIDINumber = 7;
-            break;
-        case 9:
-            tempMIDINumber = 5;
-            break;
-        case 10:
-            tempMIDINumber = 4;
-            break;
-        default:
+        case 17:
+            if (currentKey > 0)
+            {tempStartSoundInt++;}
             break;
             
-    }*/
+        case 16:
+            if (currentKey > 5)
+            {tempStartSoundInt++;}
+            else if (currentKey < -1)
+            {tempStartSoundInt--;}  // top e space
+            break;
+            
+        case 14:
+            if (currentKey > 3)
+            {tempStartSoundInt++;}
+            else if (currentKey < -3)
+            {tempStartSoundInt--;}// top d bar
+            break;
+            
+        case 12:
+            if (currentKey > 1)
+            {tempStartSoundInt++;} // top c space
+            break;
+            
+        case 11:
+            tempMIDINumber = 11; // middle b bar
+            if (currentKey < 0)
+            {tempStartSoundInt--;}
+            break;
+            
+        case 9:
+            if (currentKey > 4)
+            {tempStartSoundInt++;}
+            else if (currentKey < -2)
+            {tempStartSoundInt--;}// bottom a space
+            break;
+            
+        case 7:
+            if (currentKey > 2)
+            {tempStartSoundInt++;}
+            else if (currentKey < -4)
+            {tempStartSoundInt--;}// bottom g bar
+            break;
+            
+        case 5:
+            if (currentKey > 0)
+            {tempStartSoundInt++;} // bottom f space
+            break;
+            
+        case 4:
+            if (currentKey > 5)
+            {tempStartSoundInt++;}
+            else if (currentKey < -1)
+            {tempStartSoundInt--;}// bottom e bar
+            break;
+            
+        case 2:
+            if (currentKey > 3)
+            {tempStartSoundInt++;}
+            else if (currentKey < -3)
+            {tempStartSoundInt--;}// bottom D space
+            break;
+    
+    
+        default:
+            break;
+    }
+    
     
     switch  (accidentSelector.selectedSegmentIndex)
     {
@@ -340,7 +519,7 @@
             break;
     }
     
-NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
+//NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
 
 }
 
@@ -354,7 +533,7 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
     {
         [self addMIDIModifiers];
         [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
-        NSLog(@"inside note out of staff added");
+//        NSLog(@"inside note out of staff added");
     }
     else{
     for (int i = 0; i < 5; i++){
@@ -373,7 +552,7 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
                 tempStartSoundInt = 4;
             [self addMIDIModifiers];
             [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
-            NSLog(@"inside note on staff added");
+//            NSLog(@"inside note on staff added");
         }
         //notes inBetween staff
         else if (locY == (startingStaffY + i * spaceBetweenY - allowError)){
@@ -389,25 +568,42 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
                 tempStartSoundInt = 5;
             [self addMIDIModifiers];
             [soundNumbers addObject:[NSNumber numberWithInt:(tempStartSoundInt)]];
-            NSLog(@"inside note between staff added");
+//            NSLog(@"inside note between staff added");
         }
     }
     }
     ;
 //    [soundNumbers addObject:[NSNumber numberWithInt:(tempMIDINumber)]];
+    accidentSelector.selectedSegmentIndex = 2;
     [self playSelectedNote];
 }
 
 -(void) playSelectedNote
 {
     int index = [[soundNumbers objectAtIndex:(numOfNotes-1)] intValue];
-    NSURL *url = [soundURLs objectAtIndex:index];
+    NSURL *url = [[self getSoundURL] objectAtIndex:index];
     NSError *error;
     audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
     audioPlayer.numberOfLoops = 0;
     [audioPlayer setVolume:(volumeSlider.value)];
     [audioPlayer prepareToPlay];
     [audioPlayer play];
+}
+
+-(NSMutableArray*)getSoundURL
+{
+    switch (self.selectedInstrument)
+    {
+        case 0:
+            return pianoURLs;
+        case 1:
+            return stringsURLs;
+        case 2:
+            return bassURLs;
+        case 3:
+            return guitarURLs;
+    }
+    return pianoURLs;
 }
 
 -(void) deleteNoteAt:(CGPoint)pos
@@ -481,14 +677,18 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
 - (IBAction)playMusic:(id)sender {
     [self disableButtons];
     int index = [[soundNumbers objectAtIndex:currTrack] intValue];
-    NSURL *url = [soundURLs objectAtIndex:index];
+    int rateType = [[noteTypes objectAtIndex:currTrack] intValue];
+    NSURL *url = [[self getSoundURL] objectAtIndex:index];
     currTrack++;
     NSError *error;
     audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
-    audioPlayer.delegate = self;
-    audioPlayer.numberOfLoops = 0;
     [audioPlayer setVolume:(volumeSlider.value)];
+    audioPlayer.delegate = self;
+    audioPlayer.enableRate = YES;
     [audioPlayer prepareToPlay];
+    audioPlayer.numberOfLoops = 0;
+    audioPlayer.rate = [self getSampleRate:rateType];
+    NSLog (@"In \"play music\" The current index is %d", rateType);
     [audioPlayer play];
 }
 
@@ -503,23 +703,52 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
         }
         else if (currTrack < numOfNotes){
             int index = [[soundNumbers objectAtIndex:currTrack] intValue];
-            NSURL *url = [soundURLs objectAtIndex:index];
+            NSURL *url = [[self getSoundURL] objectAtIndex:index];
+            int rateType = [[noteTypes objectAtIndex:currTrack] intValue];
             NSError *error;
             currTrack++;
             audioPlayer = [[AVAudioPlayer alloc]initWithContentsOfURL:url error:&error];
             audioPlayer.delegate = self;
-            audioPlayer.numberOfLoops = 0;
             [audioPlayer setVolume:(volumeSlider.value)];
+            audioPlayer.enableRate = YES;
             [audioPlayer prepareToPlay];
+            audioPlayer.numberOfLoops = 0;
+            NSLog (@"In \"audioPlayerdidfinish\" The current index is %d", rateType);
+            audioPlayer.rate = [self getSampleRate:rateType];
             [audioPlayer play];
         }
     }
 }
 
+-(float)getSampleRate:(int) noteImageIndex
+{
+    
+    switch (noteImageIndex)
+    {
+        case 24:
+            return 1.0f;
+        case 13:
+            return 2.0f;
+        case 14:
+            return 4.0f;
+        case 15:
+            return 8.0f;
+        case 17:
+            return 16.0f;
+        case 18:
+            return 32.0f;
+            
+        default:
+            return 1.0f;
+    }
+    return 1.0f;
+    
+}
+
 - (IBAction)pauseMusic:(id)sender {
     [self initButtonEnable];
     StopButton.enabled = YES;
-    [StopButton setBackgroundColor:[UIColor whiteColor]];
+//    [StopButton setBackgroundColor:[UIColor whiteColor]];
     [audioPlayer pause];
 }
 
@@ -527,15 +756,17 @@ NSLog(@"THE TEMP MIDI NUMBER IS %d \n", tempMIDINumber);
     [self initButtonEnable];
     PlayButton.enabled = NO;
 //    [PlayButton setBackgroundColor:[UIColor grayColor]];
-    while (numOfNotes >0){
+    while (numOfNotes > 0){
         numOfNotes--;
         [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
         [[accidentLocations objectAtIndex:numOfNotes] removeFromSuperview];
     }
     [noteLocations removeAllObjects];
     [soundNumbers removeAllObjects];
+    [accidentLocations removeAllObjects];
+    [noteTypes removeAllObjects];
     currTrack = 0;
-    locX = 0;
+    locX = 370;
 }
 
 - (IBAction)volumeChange:(id)sender {

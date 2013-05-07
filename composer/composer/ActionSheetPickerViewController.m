@@ -28,7 +28,6 @@
 
 #import "ActionSheetPickerViewController.h"
 #import "ActionSheetPicker.h"
-#import "NSDate+TCUtils.h"
 #import "ActionSheetPickerCustomPickerDelegate.h"
 
 @interface ActionSheetPickerViewController()
@@ -97,25 +96,10 @@
  */
 }
 
-- (IBAction)selectADate:(UIControl *)sender {
-    _actionSheetPicker = [[ActionSheetDatePicker alloc] initWithTitle:@"" datePickerMode:UIDatePickerModeDate selectedDate:self.selectedDate target:self action:@selector(dateWasSelected:element:) origin:sender];
-    [self.actionSheetPicker addCustomButtonWithTitle:@"Today" value:[NSDate date]];
-    [self.actionSheetPicker addCustomButtonWithTitle:@"Yesterday" value:[[NSDate date] TC_dateByAddingCalendarUnits:NSDayCalendarUnit amount:-1]];
-    self.actionSheetPicker.hideCancel = YES;
-    [self.actionSheetPicker showActionSheetPicker];
-}
-
 - (IBAction)animalButtonTapped:(UIBarButtonItem *)sender {
     [self selectAnAnimal:sender];
 }
 
-- (IBAction)dateButtonTapped:(UIBarButtonItem *)sender {
-    [self selectADate:sender];
-}
-
-- (IBAction)selectAMeasurement:(UIControl *)sender {
-    [ActionSheetDistancePicker showPickerWithTitle:@"Select Length" bigUnitString:@"m" bigUnitMax:330 selectedBigUnit:self.selectedBigUnit smallUnitString:@"cm" smallUnitMax:99 selectedSmallUnit:self.selectedSmallUnit target:self action:@selector(measurementWasSelectedWithBigUnit:smallUnit:element:) origin:sender];
-}
 
 - (IBAction)selectAMusicalScale:(UIControl *)sender {
     
@@ -130,19 +114,6 @@
     
     //may have originated from textField or barButtonItem, use an IBOutlet instead of element
     self.animalTextField.text = [self.animals objectAtIndex:self.selectedIndex];
-}
-
-- (void)dateWasSelected:(NSDate *)selectedDate element:(id)element {
-    self.selectedDate = selectedDate;
-    
-    //may have originated from textField or barButtonItem, use an IBOutlet instead of element
-    self.dateTextField.text = [self.selectedDate description];
-}
-
-- (void)measurementWasSelectedWithBigUnit:(NSNumber *)bigUnit smallUnit:(NSNumber *)smallUnit element:(id)element {
-    self.selectedBigUnit = [bigUnit intValue];
-    self.selectedSmallUnit = [smallUnit intValue];
-    [element setText:[NSString stringWithFormat:@"%i m and %i cm", [bigUnit intValue], [smallUnit intValue]]];
 }
 
 - (void)actionPickerCancelled:(id)sender {

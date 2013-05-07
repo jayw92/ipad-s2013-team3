@@ -16,7 +16,7 @@
 {
     if (self = [super init]) {
         notesToDisplayForKey = [NSArray arrayWithObjects: @"C", @"Db", @"D", @"Eb", @"E", @"F", @"Gb", @"G", @"Ab", @"A", @"Bb", @"B", nil];
-        scaleNames = [NSArray arrayWithObjects: @"Major", @"Minor", @"Dorian", @"Spanish Gypsy", nil]; 
+        scaleNames = [NSArray arrayWithObjects: @"Major", nil]; 
     }
     return self;
 }

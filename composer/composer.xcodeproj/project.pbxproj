@@ -287,6 +287,8 @@
 		F9C4EE1F17299440006D1C78 /* Note 7.png in Resources */ = {isa = PBXBuildFile; fileRef = F9C4EDFC17299440006D1C78 /* Note 7.png */; };
 		F9C4EE2017299440006D1C78 /* Note 8.png in Resources */ = {isa = PBXBuildFile; fileRef = F9C4EDFD17299440006D1C78 /* Note 8.png */; };
 		F9C4EE2117299440006D1C78 /* Note 9.png in Resources */ = {isa = PBXBuildFile; fileRef = F9C4EDFE17299440006D1C78 /* Note 9.png */; };
+		F9E980E51739B32700CD4D73 /* tornado-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = F9E980E41739B32700CD4D73 /* tornado-icon.png */; };
+		F9E980E71739B36C00CD4D73 /* tornado-icon-1.png in Resources */ = {isa = PBXBuildFile; fileRef = F9E980E61739B36C00CD4D73 /* tornado-icon-1.png */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -587,6 +589,8 @@
 		F9C4EDFC17299440006D1C78 /* Note 7.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Note 7.png"; sourceTree = "<group>"; };
 		F9C4EDFD17299440006D1C78 /* Note 8.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Note 8.png"; sourceTree = "<group>"; };
 		F9C4EDFE17299440006D1C78 /* Note 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Note 9.png"; sourceTree = "<group>"; };
+		F9E980E41739B32700CD4D73 /* tornado-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tornado-icon.png"; sourceTree = "<group>"; };
+		F9E980E61739B36C00CD4D73 /* tornado-icon-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tornado-icon-1.png"; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -900,6 +904,8 @@
 		F99A7E2716ED2FB9005F5A1B = {
 			isa = PBXGroup;
 			children = (
+				F9E980E61739B36C00CD4D73 /* tornado-icon-1.png */,
+				F9E980E41739B32700CD4D73 /* tornado-icon.png */,
 				F99A7E3916ED2FB9005F5A1B /* composer */,
 				F99A7E3216ED2FB9005F5A1B /* Frameworks */,
 				F99A7E3116ED2FB9005F5A1B /* Products */,
@@ -1322,6 +1328,8 @@
 				61E119791738AB01005DF890 /* GUITAR_95.aif in Resources */,
 				61E1197A1738AB01005DF890 /* GUITAR_96.aif in Resources */,
 				61E1197B1738AB01005DF890 /* GUITAR_97.aif in Resources */,
+				F9E980E51739B32700CD4D73 /* tornado-icon.png in Resources */,
+				F9E980E71739B36C00CD4D73 /* tornado-icon-1.png in Resources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};

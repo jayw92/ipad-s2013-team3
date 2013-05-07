@@ -243,6 +243,10 @@
 -(void) handle2Taps:(UITapGestureRecognizer *)sender
 {
     CGPoint position = [sender locationInView:sender.view];
+    [self initButtonEnable];
+    [audioPlayer stop];
+    [audioPlayer setCurrentTime:0];
+    currTrack = 0;
     if (sender.state == UIGestureRecognizerStateEnded){
         [self deleteNoteAt:position];
         //NSLog(@"Used 2 taps: %@", NSStringFromCGPoint(position));
@@ -273,6 +277,10 @@
 -(void) handleTaps:(UITapGestureRecognizer *)sender
 {
     CGPoint position = [sender locationInView:sender.view];
+    [self initButtonEnable];
+    [audioPlayer stop];
+    [audioPlayer setCurrentTime:0];
+    currTrack = 0;
     
     tempBarOrSpace = [self getVerticalDropzoneOnStaff:&position];
     
@@ -608,7 +616,7 @@
 
 -(void) deleteNoteAt:(CGPoint)pos
 {
-    if (numOfNotes >0){
+    if (numOfNotes > 0){
         numOfNotes--;
         [[noteLocations objectAtIndex:numOfNotes] removeFromSuperview];
         [[accidentLocations objectAtIndex:numOfNotes] removeFromSuperview];
@@ -616,7 +624,12 @@
         [accidentLocations removeLastObject];
         [noteLocations removeLastObject];
         [soundNumbers removeLastObject];
-        locX = locX - spaceBetweenX;
+        if (numOfNotes == 0){
+            locX = 370;
+        }
+        else{
+            locX = [[accidentLocations objectAtIndex:(numOfNotes-1)] frame].origin.x;
+        }
     }
 }
 

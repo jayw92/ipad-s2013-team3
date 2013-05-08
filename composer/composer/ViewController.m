@@ -16,7 +16,7 @@
 
 @implementation ViewController
 
-@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2, keyButton, cleffOver;
+@synthesize audioPlayer, clearButton, scrollView, volumeSlider, pauseButton, PlayButton, HelpButton, StopButton, SettingsButton, OpenButton, SaveButton, NoteTypeSelector, accidentSelector, tapGestureRecognizer, tapGestureRecognizer2, keyButton, cleffOver;
 
 
 - (void)viewDidLoad

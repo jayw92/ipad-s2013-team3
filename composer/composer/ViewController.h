@@ -79,6 +79,7 @@ typedef int keyNumber;
 @property (weak, nonatomic) IBOutlet UIButton *SettingsButton;
 @property (weak, nonatomic) IBOutlet UIButton *pauseButton;
 @property (weak, nonatomic) IBOutlet UIButton *clearButton;
+@property (weak, nonatomic) IBOutlet UIButton *HelpButton;
 
 @property (weak, nonatomic) IBOutlet UISegmentedControl *NoteTypeSelector;
 @property (weak, nonatomic) IBOutlet UIScrollView *scrollView;

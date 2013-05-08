@@ -289,6 +289,7 @@
 		F9C4EE2117299440006D1C78 /* Note 9.png in Resources */ = {isa = PBXBuildFile; fileRef = F9C4EDFE17299440006D1C78 /* Note 9.png */; };
 		F9E980E51739B32700CD4D73 /* tornado-icon.png in Resources */ = {isa = PBXBuildFile; fileRef = F9E980E41739B32700CD4D73 /* tornado-icon.png */; };
 		F9E980E71739B36C00CD4D73 /* tornado-icon-1.png in Resources */ = {isa = PBXBuildFile; fileRef = F9E980E61739B36C00CD4D73 /* tornado-icon-1.png */; };
+		F9F8A00E1739CD9200512149 /* Crashlytics.framework in Frameworks */ = {isa = PBXBuildFile; fileRef = F9F8A00D1739CD9200512149 /* Crashlytics.framework */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -591,6 +592,7 @@
 		F9C4EDFE17299440006D1C78 /* Note 9.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "Note 9.png"; sourceTree = "<group>"; };
 		F9E980E41739B32700CD4D73 /* tornado-icon.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tornado-icon.png"; sourceTree = "<group>"; };
 		F9E980E61739B36C00CD4D73 /* tornado-icon-1.png */ = {isa = PBXFileReference; lastKnownFileType = image.png; path = "tornado-icon-1.png"; sourceTree = "<group>"; };
+		F9F8A00D1739CD9200512149 /* Crashlytics.framework */ = {isa = PBXFileReference; lastKnownFileType = wrapper.framework; path = Crashlytics.framework; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -604,6 +606,7 @@
 				F99A7E3416ED2FB9005F5A1B /* UIKit.framework in Frameworks */,
 				F99A7E3616ED2FB9005F5A1B /* Foundation.framework in Frameworks */,
 				F99A7E3816ED2FB9005F5A1B /* CoreGraphics.framework in Frameworks */,
+				F9F8A00E1739CD9200512149 /* Crashlytics.framework in Frameworks */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -923,6 +926,7 @@
 		F99A7E3216ED2FB9005F5A1B /* Frameworks */ = {
 			isa = PBXGroup;
 			children = (
+				F9F8A00D1739CD9200512149 /* Crashlytics.framework */,
 				F93DB0EC17278E88004CA329 /* AVFoundation.framework */,
 				F99A7E6D16ED4589005F5A1B /* QuartzCore.framework */,
 				F99A7E5F16ED3451005F5A1B /* CoreText.framework */,
@@ -1025,6 +1029,7 @@
 				F99A7E2C16ED2FB9005F5A1B /* Sources */,
 				F99A7E2D16ED2FB9005F5A1B /* Frameworks */,
 				F99A7E2E16ED2FB9005F5A1B /* Resources */,
+				F9F8A00C1739CD5200512149 /* ShellScript */,
 			);
 			buildRules = (
 			);
@@ -1335,6 +1340,22 @@
 		};
 /* End PBXResourcesBuildPhase section */
 
+/* Begin PBXShellScriptBuildPhase section */
+		F9F8A00C1739CD5200512149 /* ShellScript */ = {
+			isa = PBXShellScriptBuildPhase;
+			buildActionMask = 2147483647;
+			files = (
+			);
+			inputPaths = (
+			);
+			outputPaths = (
+			);
+			runOnlyForDeploymentPostprocessing = 0;
+			shellPath = /bin/sh;
+			shellScript = "./Crashlytics.framework/run 2696b6180c803c2901bd36859ff21f19420506cb";
+		};
+/* End PBXShellScriptBuildPhase section */
+
 /* Begin PBXSourcesBuildPhase section */
 		F99A7E2C16ED2FB9005F5A1B /* Sources */ = {
 			isa = PBXSourcesBuildPhase;
@@ -1433,6 +1454,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jay Wang (MS8H4F6X97)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jay Wang (MS8H4F6X97)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "composer/composer-Prefix.pch";
 				INFOPLIST_FILE = "composer/composer-Info.plist";
@@ -1449,6 +1474,10 @@
 			buildSettings = {
 				CODE_SIGN_IDENTITY = "iPhone Developer: Jay Wang (MS8H4F6X97)";
 				"CODE_SIGN_IDENTITY[sdk=iphoneos*]" = "iPhone Developer: Jay Wang (MS8H4F6X97)";
+				FRAMEWORK_SEARCH_PATHS = (
+					"$(inherited)",
+					"\"$(SRCROOT)\"",
+				);
 				GCC_PRECOMPILE_PREFIX_HEADER = YES;
 				GCC_PREFIX_HEADER = "composer/composer-Prefix.pch";
 				INFOPLIST_FILE = "composer/composer-Info.plist";

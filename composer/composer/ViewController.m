@@ -44,6 +44,10 @@
     bassURLs = [[NSMutableArray alloc] init];
     guitarURLs = [[NSMutableArray alloc] init];
     stringsURLs = [[NSMutableArray alloc] init];
+    saxURLs = [[NSMutableArray alloc] init];
+    hornURLs = [[NSMutableArray alloc] init];
+    synthURLs = [[NSMutableArray alloc] init];
+    fatBassURLs = [[NSMutableArray alloc] init];
     soundNumbers = [[NSMutableArray alloc] init];
     noteTypes = [[NSMutableArray alloc] init];
     for (int i = 48; i <= 97; i++){
@@ -55,6 +59,14 @@
         [stringsURLs addObject:url];
         url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/BASS_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
         [bassURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/HORNS_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [hornURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/SAX_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [saxURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/ORGANSYNTH_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [synthURLs addObject:url];
+        url = [NSURL fileURLWithPath:[NSString stringWithFormat:@"%@/FAT_WOBBLE_%d.aif", [[NSBundle mainBundle] resourcePath], i]];
+        [fatBassURLs addObject:url];
     }
     
     tapGestureRecognizer = [[UITapGestureRecognizer alloc]initWithTarget:self action:@selector(handleTaps:)];
@@ -69,7 +81,8 @@
     self.selectedIndex = 5;
     [self drawCleff];
     self.keys = [NSArray arrayWithObjects:  @"D♭ major", @"A♭ major", @"E♭ major", @"B♭ major", @"F major", @"C major", @"G major", @"D major",@"A major", @"E major", @"B major", @"F♯ major",   nil];
-    self.instruments = [NSArray arrayWithObjects:  @"Piano", @"Strings", @"Bass", @"Guitar",   nil];
+    self.instruments = [NSArray arrayWithObjects:  @"🎹 Piano", @"🎻 Strings", @"🎸 Bass", @"🎸 Guitar", @"🎺 Horns", @"🎷 Saxophone",
+                     @"👾 Hipster Synth", @"🔥⚠FAT_WOBBLE⚠🔥", nil];
 
 }
 
@@ -434,8 +447,10 @@
 {
     //bool isSharpened = false;
     //bool isFlatted = false;
-    //bool isNatural = true;
+    bool isNaturalSelected = (accidentSelector.selectedSegmentIndex== 1);
     
+    if (!isNaturalSelected)
+    {
     switch (tempStartSoundInt)
     {
         case 19:
@@ -446,7 +461,7 @@
             break;
         case 17:
             if (currentKey > 0)
-            {tempStartSoundInt++;}
+            {tempStartSoundInt++;}  // top f bar
             break;
             
         case 16:
@@ -511,7 +526,7 @@
         default:
             break;
     }
-    
+    }
     
     switch  (accidentSelector.selectedSegmentIndex)
     {
@@ -610,6 +625,14 @@
             return bassURLs;
         case 3:
             return guitarURLs;
+        case 4:
+            return hornURLs;
+        case 5:
+            return saxURLs;
+        case 6:
+            return synthURLs;
+        case 7:
+            return fatBassURLs;
     }
     return pianoURLs;
 }

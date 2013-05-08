@@ -10,6 +10,7 @@
 
 #import "ViewController.h"
 #import <Crashlytics/Crashlytics.h>
+
 @implementation composerAppDelegate
 
 - (BOOL)application:(UIApplication *)application didFinishLaunchingWithOptions:(NSDictionary *)launchOptions
@@ -23,7 +24,7 @@
     }
     self.window.rootViewController = self.viewController;
     [self.window makeKeyAndVisible];
-    [Crashlytics startWithAPIKey:@"2696b6180c803c2901bd36859ff21f19420506cb"];
+[Crashlytics startWithAPIKey:@"2696b6180c803c2901bd36859ff21f19420506cb"];
     return YES;
 }
 
